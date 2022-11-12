@@ -17,7 +17,16 @@ function App() {
     <div className="App">
       <div className="Container">
         <Display displayID="display" />
-        <Button numberID="zero" symbol="0" />
+        <Button buttonID="zero" symbol="0" />
+        <Button buttonID="one" symbol="1" />
+        <Button buttonID="two" symbol="2" />
+        <Button buttonID="three" symbol="3" />
+        <Button buttonID="four" symbol="4" />
+        <Button buttonID="five" symbol="5" />
+        <Button buttonID="six" symbol="6" />
+        <Button buttonID="seven" symbol="7" />
+        <Button buttonID="eight" symbol="8" />
+        <Button buttonID="nine" symbol="9" />
         <Button buttonID="equals" symbol='=' />
         <Button buttonID="add" symbol='+' />
       </div>
