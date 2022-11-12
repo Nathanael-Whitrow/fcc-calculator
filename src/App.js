@@ -29,6 +29,9 @@ function App() {
         <Button buttonID="nine" symbol="9" />
         <Button buttonID="equals" symbol='=' />
         <Button buttonID="add" symbol='+' />
+        <Button buttonID="subtract" symbol='-' />
+        <Button buttonID="multiply" symbol='*' />
+        <Button buttonID="divide" symbol='/' />
       </div>
     </div>
   );
