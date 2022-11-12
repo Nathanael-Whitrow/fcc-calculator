@@ -33,6 +33,7 @@ function App() {
         <Button buttonID="multiply" symbol='*' />
         <Button buttonID="divide" symbol='/' />
         <Button buttonID="decimal" symbol='.' />
+        <Button buttonID="clear" symbol="AC" />
       </div>
     </div>
   );
