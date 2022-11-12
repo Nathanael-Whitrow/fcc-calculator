@@ -1,20 +1,14 @@
 import './App.css';
 
-function Display() {
+function Display(props) {
   return (
-    <p>Display</p>
+    <p id={props.displayID}>Display</p>
   )
 }
 
-function Number() {
+function Button(props) {
   return (
-    <button>number button</button>
-  )
-}
-
-function ActionButton() {
-  return (
-    <button>Action button</button>
+    <button id={props.buttonID} >{props.symbol}</button>
   )
 }
 
@@ -22,9 +16,10 @@ function App() {
   return (
     <div className="App">
       <div className="Container">
-        <Display />
-        <Number />
-        <ActionButton />
+        <Display displayID="display" />
+        <Button numberID="zero" symbol="0" />
+        <Button buttonID="equals" symbol='=' />
+        <Button buttonID="add" symbol='+' />
       </div>
     </div>
   );
