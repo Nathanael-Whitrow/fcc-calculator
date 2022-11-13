@@ -7,39 +7,63 @@ function Display(props) {
   )
 }
 
-function Button(props) {
+function DigitButton(props) {
   return (
-    <button id={props.buttonID} onClick={props.action} >{props.symbol}</button>
+    <button
+      id={props.buttonID}
+      onClick={() => props.action(props.symbol)}
+    >
+      {props.symbol}
+    </button>
+  )
+}
+
+function ActionButton(props) {
+  return (
+    <button
+      id={props.buttonID}
+      onClick={props.action}
+    >
+      {props.symbol}
+    </button>
   )
 }
 
 function App() {
 
-  const [input, setInput] = useState("0");
-  const [output, setOutput] = useState("");
+  const [input, setInput] = useState('0');
+
+  function appendDigit(num) {
+    if (input === '0') {
+      setInput(num);
+    }
+    else {
+      setInput(input + num);
+    }
+    return;
+  }
 
   return (
-    <div className="App">
-      <div className="Container">
-        <Display displayID="output" display={output} />
-        <Display displayID="display" display={input} />
-        <Button buttonID="zero" symbol="0" />
-        <Button buttonID="one" symbol="1" />
-        <Button buttonID="two" symbol="2" />
-        <Button buttonID="three" symbol="3" />
-        <Button buttonID="four" symbol="4" />
-        <Button buttonID="five" symbol="5" />
-        <Button buttonID="six" symbol="6" />
-        <Button buttonID="seven" symbol="7" />
-        <Button buttonID="eight" symbol="8" />
-        <Button buttonID="nine" symbol="9" />
-        <Button buttonID="equals" symbol='=' />
-        <Button buttonID="add" symbol='+' />
-        <Button buttonID="subtract" symbol='-' />
-        <Button buttonID="multiply" symbol='*' />
-        <Button buttonID="divide" symbol='/' />
-        <Button buttonID="decimal" symbol='.' />
-        <Button buttonID="clear" symbol="AC" action={() => { setInput('0'); setOutput(''); }} />
+    <div className='App'>
+      <div className='Container'>
+        <Display displayID='display' display={input} />
+        <DigitButton buttonID='zero' symbol='0' action={appendDigit} />
+        <DigitButton buttonID='one' symbol='1' action={appendDigit} />
+        <DigitButton buttonID='two' symbol='2' action={appendDigit} />
+        <DigitButton buttonID='three' symbol='3' action={appendDigit} />
+        <DigitButton buttonID='four' symbol='4' action={appendDigit} />
+        <DigitButton buttonID='five' symbol='5' action={appendDigit} />
+        <DigitButton buttonID='six' symbol='6' action={appendDigit} />
+        <DigitButton buttonID='seven' symbol='7' action={appendDigit} />
+        <DigitButton buttonID='eight' symbol='8' action={appendDigit} />
+        <DigitButton buttonID='nine' symbol='9' action={appendDigit} />
+        <ActionButton buttonID='equals' symbol='=' />
+        <ActionButton buttonID='add' symbol='+' />
+        <ActionButton buttonID='subtract' symbol='-' />
+        <ActionButton buttonID='multiply' symbol='*' />
+        <ActionButton buttonID='divide' symbol='/' />
+        <ActionButton buttonID='decimal' symbol='.' />
+        <ActionButton buttonID='clear' symbol='AC' action={() => setInput('0')} />
       </div>
     </div>
   );
