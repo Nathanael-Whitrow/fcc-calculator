@@ -39,7 +39,7 @@ function App() {
         <Button buttonID="multiply" symbol='*' />
         <Button buttonID="divide" symbol='/' />
         <Button buttonID="decimal" symbol='.' />
-        <Button buttonID="clear" symbol="AC" action={() => { setInput('0'); setOutput(''); console.log("activated"); }} />
+        <Button buttonID="clear" symbol="AC" action={() => { setInput('0'); setOutput(''); }} />
       </div>
     </div>
   );
