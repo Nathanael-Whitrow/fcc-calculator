@@ -1,22 +1,28 @@
 import './App.css';
+import { useState } from 'react'
 
 function Display(props) {
   return (
-    <p id={props.displayID}>Display</p>
+    <p id={props.displayID}>{props.display}</p>
   )
 }
 
 function Button(props) {
   return (
-    <button id={props.buttonID} >{props.symbol}</button>
+    <button id={props.buttonID} onClick={props.action} >{props.symbol}</button>
   )
 }
 
 function App() {
+
+  const [input, setInput] = useState("0");
+  const [output, setOutput] = useState("");
+
   return (
     <div className="App">
       <div className="Container">
-        <Display displayID="display" />
+        <Display displayID="output" display={output} />
+        <Display displayID="display" display={input} />
         <Button buttonID="zero" symbol="0" />
         <Button buttonID="one" symbol="1" />
         <Button buttonID="two" symbol="2" />
@@ -33,7 +39,7 @@ function App() {
         <Button buttonID="multiply" symbol='*' />
         <Button buttonID="divide" symbol='/' />
         <Button buttonID="decimal" symbol='.' />
-        <Button buttonID="clear" symbol="AC" />
+        <Button buttonID="clear" symbol="AC" action={() => { setInput('0'); setOutput(''); console.log("activated"); }} />
       </div>
     </div>
   );
