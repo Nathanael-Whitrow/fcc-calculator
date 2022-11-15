@@ -75,6 +75,59 @@ function App() {
     return;
   }
 
+  function appendDecimal(decimal) {
+    // Get the last number
+    let number = input.match(/[0-9.]+$/g);
+    if (number) {
+      if (! /\./g.test(...number)) {
+        setInput(input + decimal);
+      }
+      return;
+    }
+    return;
+  }
+
+  function calculate(symbol) {
+    // Split string into components
+    const stringParts = input.match(/-?[0-9.]+|[*/+]/g);
+    const numberParts = stringParts.map(
+      (el) => parseFloat(el) ? parseFloat(el) : el
+    );
+
+    // Loop over parts with a reducer?
+    function multiplyReducer(prev, currentValue, i, array) {
+      if (array[i - 1] === '*') {
+        const newValue = prev[i - 2] * currentValue;
+        const newArray = prev.slice(0, i - 2);
+        return newArray.concat(newValue);
+      }
+      else {
+        return prev.concat(currentValue);
+      }
+    }
+
+    function divideReducer(prev, currentValue, i, array) {
+      if (array[i - 1] === '/') {
+        const newValue = prev[i - 2] / currentValue;
+        const newArray = prev.slice(0, i - 2);
+        return newArray.concat(newValue);
+      }
+      else {
+        return prev.concat(currentValue);
+      }
+    }
+
+    function addReducer(prev, currentValue) {
+      return (currentValue === '+') ? prev : prev + currentValue;
+    }
+
+    const multiplied = numberParts.reduce(multiplyReducer, []);
+    const divided = multiplied.reduce(divideReducer, []);
+    const added = divided.reduce(addReducer);
+    setInput(added.toString());
+    return;
+  }
+
   return (
     <div className='App'>
       <div className='Container'>
@@ -90,7 +143,7 @@ function App() {
         <DigitButton buttonID='eight' symbol='8' action={appendDigit} />
         <DigitButton buttonID='nine' symbol='9' action={appendDigit} />
 
-        <ActionButton buttonID='decimal' symbol='.' />
+        <ActionButton buttonID='decimal' symbol='.' action={appendDecimal} />
 
         <ActionButton buttonID='add' symbol='+' action={appendSymbol} />
         <ActionButton buttonID='multiply' symbol='*' action={appendSymbol} />
@@ -98,7 +151,7 @@ function App() {
 
         <ActionButton buttonID='subtract' symbol='-' action={appendMinus} />
 
-        <ActionButton buttonID='equals' symbol='=' />
+        <ActionButton buttonID='equals' symbol='=' action={calculate} />
         <ActionButton buttonID='clear' symbol='AC' action={() => setInput('0')} />
       </div>
     </div>
