@@ -1,17 +1,23 @@
 import './App.css';
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 function Display(props) {
+  // Can call hooks here
   return (
     <p id={props.displayID}>{props.display}</p>
   )
 }
 
 function Button(props) {
+  // Can call hooks here
   return (
     <button
       id={props.buttonID}
-      onClick={() => props.action(props.symbol)}
+      onClick={() => props.action(props.symbol,
+        props.state.inInput,
+        props.state.setInInput,
+        props.state.isFresh,
+        props.state.setIsFresh)}
     >
       {props.symbol}
     </button>
@@ -20,81 +26,89 @@ function Button(props) {
 
 function App() {
 
-  function appendDigit(num) {
-
+  function appendDigit(num, state, setState, fresh, setFresh) {
+    if (!fresh) {
+      state = '0';
+      setFresh(true);
+    }
     // Initial state
-    if (input === '0') {
-      setInput(num);
+    if (state === '0') {
+      setState(num);
     }
     // Careful of things like -0000
-    else if (input === '-' && num === '0') {
+    else if (state === '-' && num === '0') {
       return;
     }
     // No real limitations on when adding more digits is allowed
     else {
-      setInput(input + num);
+      setState(state + num);
     }
     return;
   }
 
-  function appendSymbol(symbol) {
+  function appendSymbol(symbol, state, setState) {
     // Don't add operator to initial state
-    if (input === '0') {
+    if (state === '0') {
       return;
     }
     // Is the last char a digit?
-    else if (/[0-9.]/.test(input.at(-1))) {
-      setInput(input + symbol);
+    else if (/[0-9.]/.test(state.at(-1))) {
+      setState(state + symbol);
     }
     // Last char must be an operator: * / - +
     // Overwrite the existing symbol if the previous char is a digit
     // (This allows for the next number to be a negative)
-    else if (/[0-9.]/.test(input.at(-2))) {
-      setInput(input.substring(0, input.length - 1).concat(symbol));
+    else if (/[0-9.]/.test(state.at(-2))) {
+      setState(state.substring(0, state.length - 1).concat(symbol));
     }
     // Check for last two chars being operators
-    else if (/[*/+-]/.test(input.at(-2))) {
-      setInput(input.substring(0, input.length - 2).concat(symbol));
+    else if (/[*/+-]/.test(state.at(-2))) {
+      setState(state.substring(0, state.length - 2).concat(symbol));
     }
     return;
   }
 
-  function appendMinus(minus) {
+  function appendMinus(minus, state, setState) {
     // Should be able to start with a negative number
-    if (input === '0') {
-      setInput(minus);
+    if (state === '0') {
+      setState(minus);
       return;
     }
-    else if (/[0-9.]/.test(input.at(-1))) {
-      setInput(input + minus);
+    else if (/[0-9.]/.test(state.at(-1))) {
+      setState(state + minus);
     }
     // Must be a symbol: * / - +
     // If it's * / + AND previous was a digit, append a minus
-    else if (/[0-9.]/.test(input.at(-2)) &&
-      input.at(-1) !== '-') {
-      setInput(input + minus);
+    else if (/[0-9.]/.test(state.at(-2)) &&
+      state.at(-1) !== '-') {
+      setState(state + minus);
     }
     // Last char must be a - so do nothing
     return;
   }
 
-  function appendDecimal(decimal) {
+  function appendDecimal(decimal, state, setState, fresh, setFresh) {
+    if (!fresh) {
+      state = '0';
+      setFresh(true);
+    }
     // Get the entire last number
-    let number = input.match(/[0-9.]+$/g);
+    let number = state.match(/[0-9.]+$/g);
     if (number) {
       // Check it doesn't already have a decimal
       if (! /\./g.test(number[0])) {
-        setInput(input + decimal);
+        setState(state + decimal);
       }
     }
     // The number is a symbol
     else {
-      setInput(input + '0' + decimal);
+      setState(state + '0' + decimal);
     }
     return;
   }
 
-  function calculate(symbol) {
+  function calculate(symbol, state, setState, fresh, setFresh) {
+    console.log(state, "The state handed to calculate");
     function multiplyReducer(prev, currentValue, i, array) {
       if (array[i - 1] === '*') {
         const newValue = prev[prev.length - 2] * currentValue;
@@ -117,7 +131,7 @@ function App() {
       }
     }
 
-    setInput(input
+    setState(state
       .match(/-?[0-9.]+|[*/+]/g)  // Split string into array
       .map((el) => parseFloat(el) ? parseFloat(el) : el)  // convert to numbers
       .reduce(multiplyReducer, []) // do mulitplication
@@ -125,38 +139,49 @@ function App() {
       .reduce((prev, cur) => (cur === '+') ? prev : prev + cur) // add everything else
       .toString() // back to string
     );
+    setFresh(false);
     return;
   }
 
-  function clear(symbol) {
-    setInput('0');
+  function clear(symbol, state, setState) {
+    setState('0');
     return;
   }
 
   // The only state we need...
   const [input, setInput] = useState('0');
+  const [fresh, setFresh] = useState(true);
+  const stateStuff = {
+    inInput: input,
+    setInInput: setInput,
+    isFresh: fresh,
+    setIsFresh: setFresh,
+  }
+
+  // Can call hooks here
+  console.log(input, "The input before render");
 
   return (
     <div className='App'>
       <div className='Container'>
         <Display displayID='display' display={input} />
-        <Button state={input} setState={setInput} buttonID='zero' symbol='0' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='one' symbol='1' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='two' symbol='2' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='three' symbol='3' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='four' symbol='4' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='five' symbol='5' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='six' symbol='6' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='seven' symbol='7' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='eight' symbol='8' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='nine' symbol='9' action={appendDigit} />
-        <Button state={input} setState={setInput} buttonID='decimal' symbol='.' action={appendDecimal} />
-        <Button state={input} setState={setInput} buttonID='add' symbol='+' action={appendSymbol} />
-        <Button state={input} setState={setInput} buttonID='multiply' symbol='*' action={appendSymbol} />
-        <Button state={input} setState={setInput} buttonID='divide' symbol='/' action={appendSymbol} />
-        <Button state={input} setState={setInput} buttonID='subtract' symbol='-' action={appendMinus} />
-        <Button state={input} setState={setInput} buttonID='equals' symbol='=' action={calculate} />
-        <Button state={input} setState={setInput} buttonID='clear' symbol='AC' action={clear} />
+        <Button state={stateStuff} buttonID='zero' symbol='0' action={appendDigit} />
+        <Button state={stateStuff} buttonID='one' symbol='1' action={appendDigit} />
+        <Button state={stateStuff} buttonID='two' symbol='2' action={appendDigit} />
+        <Button state={stateStuff} buttonID='three' symbol='3' action={appendDigit} />
+        <Button state={stateStuff} buttonID='four' symbol='4' action={appendDigit} />
+        <Button state={stateStuff} buttonID='five' symbol='5' action={appendDigit} />
+        <Button state={stateStuff} buttonID='six' symbol='6' action={appendDigit} />
+        <Button state={stateStuff} buttonID='seven' symbol='7' action={appendDigit} />
+        <Button state={stateStuff} buttonID='eight' symbol='8' action={appendDigit} />
+        <Button state={stateStuff} buttonID='nine' symbol='9' action={appendDigit} />
+        <Button state={stateStuff} buttonID='decimal' symbol='.' action={appendDecimal} />
+        <Button state={stateStuff} buttonID='add' symbol='+' action={appendSymbol} />
+        <Button state={stateStuff} buttonID='multiply' symbol='*' action={appendSymbol} />
+        <Button state={stateStuff} buttonID='divide' symbol='/' action={appendSymbol} />
+        <Button state={stateStuff} buttonID='subtract' symbol='-' action={appendMinus} />
+        <Button state={stateStuff} buttonID='equals' symbol='=' action={calculate} />
+        <Button state={stateStuff} buttonID='clear' symbol='AC' action={clear} />
       </div>
     </div>
   );
