@@ -20,15 +20,7 @@ function Button(props) {
 
 function App() {
 
-  // The only state we need...
-  const [input, setInput] = useState('0');
-  const [fresh, setFresh] = useState(true);
-
   function appendDigit(num) {
-    if (fresh) {
-      clear();
-      setFresh(false);
-    }
 
     // Initial state
     if (input === '0') {
@@ -133,15 +125,16 @@ function App() {
       .reduce((prev, cur) => (cur === '+') ? prev : prev + cur) // add everything else
       .toString() // back to string
     );
-    setFresh(true);
     return;
   }
 
   function clear(symbol) {
     setInput('0');
-    setFresh(true);
     return;
   }
+
+  // The only state we need...
+  const [input, setInput] = useState('0');
 
   return (
     <div className='App'>
