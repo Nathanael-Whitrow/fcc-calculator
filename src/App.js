@@ -2,14 +2,12 @@ import './App.css';
 import { useState } from 'react'
 
 function Display(props) {
-  // Can call hooks here
   return (
     <p id={props.displayID}>{props.display}</p>
   )
 }
 
 function Button(props) {
-  // Can call hooks here
   return (
     <button
       id={props.buttonID}
@@ -46,7 +44,9 @@ function App() {
     return;
   }
 
-  function appendSymbol(symbol, state, setState) {
+  function appendSymbol(symbol, state, setState, fresh, setFresh) {
+    if (!fresh) { setFresh(true); }
+
     // Don't add operator to initial state
     if (state === '0') {
       return;
@@ -108,7 +108,6 @@ function App() {
   }
 
   function calculate(symbol, state, setState, fresh, setFresh) {
-    console.log(state, "The state handed to calculate");
     function multiplyReducer(prev, currentValue, i, array) {
       if (array[i - 1] === '*') {
         const newValue = prev[prev.length - 2] * currentValue;
@@ -157,9 +156,6 @@ function App() {
     isFresh: fresh,
     setIsFresh: setFresh,
   }
-
-  // Can call hooks here
-  console.log(input, "The input before render");
 
   return (
     <div className='App'>
